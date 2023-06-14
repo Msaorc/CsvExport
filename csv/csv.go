@@ -27,6 +27,11 @@ type CsvObject struct {
 	File   File
 }
 
+type RegisterPeople struct {
+	Name  string
+	Email string
+}
+
 func NewCsvObject(path string, name string) (*CsvObject, error) {
 	csv := &CsvObject{
 		Path: path,
@@ -84,6 +89,34 @@ func (o *CsvObject) GenerateCsv() error {
 		return err
 	}
 	return nil
+}
+
+func ReadCsv(fullPath string) ([]RegisterPeople, error) {
+	if fullPath == "" {
+		return nil, errPathInvalid
+	}
+	file, err := os.Open(fullPath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	reader := csv.NewReader(file)
+	reader.Comma = ';'
+	fileOpen, err := reader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+	var people []RegisterPeople
+	for _, line := range fileOpen {
+		peopleLine := RegisterPeople{
+			Name:  line[0],
+			Email: line[1],
+		}
+
+		people = append(people, peopleLine)
+	}
+
+	return people, nil
 }
 
 func (o *CsvObject) validate() error {
