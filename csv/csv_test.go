@@ -29,3 +29,11 @@ func (suite *CsvTestSuite) TestNewCSVObjetct() {
 	assert.Equal(suite.T(), suite.Path, csvObject.Path)
 	assert.Equal(suite.T(), suite.FileName, csvObject.Name)
 }
+
+func (suite *CsvTestSuite) TestAddLine() {
+	csvObject, err := NewCsvObject(suite.Path, suite.FileName)
+	assert.Nil(suite.T(), err)
+	err = csvObject.AddLine(*suite.Line1)
+	assert.Nil(suite.T(), err)
+	assert.Len(suite.T(), csvObject.File.Lines, 1)
+}
